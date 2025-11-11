@@ -68,7 +68,13 @@
         .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; justify-content: center; }
         .menu-item-card { background-color: #fff; border-radius: 15px; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08); overflow: hidden; text-align: left; transition: all 0.3s ease; display: flex; flex-direction: column; height: 380px; }
         .menu-item-card:hover { transform: translateY(-8px); box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15); }
-        .menu-item-card img { width: 100%; height: 200px; object-fit: cover; }
+        
+        .menu-item-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover; /* This fills the box and crops, ensuring no empty space */
+        }
+
         .menu-item-card h3 { font-family: 'Mada', sans-serif; font-size: 1.6em; margin: 20px 20px 10px; color: #222; font-weight: 600; line-height: 1.3; }
         .item-price-add { display: flex; justify-content: space-between; align-items: center; padding: 0 20px 20px; margin-top: auto; }
         .item-price-add .price { font-family: 'Mada', sans-serif; font-size: 1.5em; font-weight: 700; color: #333; }
@@ -80,13 +86,44 @@
         .item-modal-content { background-color: #fff; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,.2); width: 90%; max-width: 500px !important; padding: 0 !important; text-align: left; position: relative; animation: fadeIn .4s; }
         @keyframes fadeIn { from { opacity: 0; transform: scale(.95) } to { opacity: 1; transform: scale(1) } }
         .item-modal-content .close-button { position: absolute; top: 10px; right: 20px; color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer; }
-        .item-modal-content img { width: 100%; height: 250px; object-fit: cover; border-top-left-radius: 10px; border-top-right-radius: 10px; }
+        
+        .item-modal-content img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            cursor: default; /* --- MODIFICATION: Changed from 'zoom-in' to 'default' --- */
+        }
+
         .modal-item-details { padding: 25px; }
-        .modal-item-details h2 { font-size: 2em; margin-top: 0; margin-bottom: 15px; text-align: left; color: #222; }
+        .modal-item-details h2 { font-size: 2em; margin-top: 0; margin-bottom: 0; text-align: left; color: #222; line-height: 1.2; }
         .modal-item-details p { font-size: 1.1em; color: #555; line-height: 1.7; margin-bottom: 20px; }
         .modal-price-tag { font-size: 1.8em; font-weight: 700; color: #333; text-align: right; }
 
         .swipe-indicator { display: none; }
+
+        .image-viewer-modal {
+            background-color: rgba(0,0,0,0.85); /* Darker overlay */
+            z-index: 2001; /* Above the first modal */
+        }
+        .image-viewer-content {
+            background-color: transparent;
+            box-shadow: none;
+            max-width: 90%;
+            max-height: 90vh;
+            width: auto;
+            height: auto;
+            padding: 0 !important;
+            border-radius: 5px;
+        }
+        .image-viewer-close {
+            color: #f1f1f1;
+            font-size: 40px;
+            top: 15px;
+            right: 35px;
+            text-shadow: 0 0 8px rgba(0,0,0,0.7);
+        }
 
         @media (max-width: 1024px) {
             .menu-header { flex-direction: column; align-items: flex-start; }
@@ -144,16 +181,19 @@
                         <div class="line"></div>
                     </div>
                 </div>
-                <div class="menu-header"> {/* This div should now stick */}
+                <div class="menu-header"> 
                     <div class="category-buttons-container">
                         <div class="category-buttons">
                             <button class="category-btn active" data-category="All"><i class="fas fa-list"></i><span class="btn-text">All Items</span></button>
                             <button class="category-btn" data-category="Specialty"><i class="fas fa-utensils"></i><span class="btn-text">Specialty</span></button>
+                            <button class="category-btn" data-category="Appetizer"><i class="fas fa-concierge-bell"></i><span class="btn-text">Appetizer</span></button>
                             <button class="category-btn" data-category="Breakfast"><i class="fas fa-egg"></i><span class="btn-text">All Day Breakfast</span></button>
-                            <button class="category-btn" data-category="Coffee"><i class="fas fa-coffee"></i><span class="btn-text">Cafe Drinks</span></button>
-                            <button class="category-btn" data-category="Cool Creations"><i class="fas fa-blender"></i><span class="btn-text">Frappe</span></button>
                             <button class="category-btn" data-category="Lunch"><i class="fas fa-drumstick-bite"></i><span class="btn-text">Ala Carte/For Sharing</span></button>
                             <button class="category-btn" data-category="Sizzlers"><i class="fas fa-fire-alt"></i><span class="btn-text">Sizzling Plates</span></button>
+                            <button class="category-btn" data-category="Coffee"><i class="fas fa-coffee"></i><span class="btn-text">Cafe Drinks</span></button>
+                            <button class="category-btn" data-category="Non-Coffee"><i class="fas fa-mug-hot"></i><span class="btn-text">Non-Coffee</span></button>
+                            <button class="category-btn" data-category="Cool Creations"><i class="fas fa-blender"></i><span class="btn-text">Frappe</span></button>
+                            <button class="category-btn" data-category="Cakes"><i class="fas fa-birthday-cake"></i><span class="btn-text">Cakes</span></button>
                         </div>
                         <div class="swipe-indicator">Swipe <i class="fas fa-hand-pointer"></i></div>
                     </div>
@@ -221,11 +261,23 @@
             <span class="close-button">&times;</span>
             <img id="modalItemImage" src="" alt="Menu Item Image">
             <div class="modal-item-details">
-                <h2 id="modalItemName"></h2>
+                
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+                    <h2 id="modalItemName"></h2>
+                    <button id="viewFullImageBtn" class="view-details-btn" title="View full image" style="flex-shrink: 0; margin-left: 15px;">
+                        <i class="fas fa-search-plus"></i>
+                    </button>
+                </div>
+
                 <p id="modalItemDescription"></p>
                 <div class="modal-price-tag" id="modalItemPrice"></div>
             </div>
         </div>
+    </div>
+
+    <div id="imageViewerModal" class="modal image-viewer-modal">
+        <span class="close-button image-viewer-close">&times;</span>
+        <img class="modal-content image-viewer-content" id="fullScreenImage" alt="Full screen menu item image">
     </div>
 
     <script src="JS/theme-switcher.js"></script>
@@ -242,7 +294,7 @@
             document.querySelectorAll('.view-details-btn').forEach(button => {
                 button.addEventListener('click', () => {
                     const card = button.closest('.menu-item-card');
-                    if (!card || !menuItemModal) return; // Add checks
+                    if (!card || !menuItemModal) return; 
 
                     modalName.textContent = card.dataset.name;
                     modalImage.src = card.dataset.image;
@@ -253,28 +305,76 @@
                 });
             });
 
-            if (modalCloseButton) { // Add check if element exists
+            if (modalCloseButton) { 
                 modalCloseButton.addEventListener('click', () => {
-                    if (menuItemModal) menuItemModal.style.display = 'none'; // Add check
+                    if (menuItemModal) menuItemModal.style.display = 'none';
                 });
             }
 
-
+            // --- MODIFICATION: Removed window.addEventListener for menuItemModal ---
+            /*
             window.addEventListener('click', (event) => {
                 if (event.target == menuItemModal) {
-                   if (menuItemModal) menuItemModal.style.display = 'none'; // Add check
+                   if (menuItemModal) menuItemModal.style.display = 'none';
                 }
             });
+            */
+            // --- END MODIFICATION ---
+
+
+            // --- Image Viewer Modal Logic ---
+            const imageViewerModal = document.getElementById('imageViewerModal');
+            const fullScreenImage = document.getElementById('fullScreenImage');
+            const imageViewerCloseBtn = imageViewerModal ? imageViewerModal.querySelector('.image-viewer-close') : null;
+            const viewFullImageBtn = document.getElementById('viewFullImageBtn');
+
+            function openImageViewer() {
+                if(imageViewerModal && fullScreenImage && modalImage) {
+                    fullScreenImage.src = modalImage.src;
+                    imageViewerModal.style.display = 'flex';
+                }
+            }
+
+            // --- MODIFICATION: Removed click listener for modalImage ---
+            /*
+            if (modalImage) {
+                modalImage.addEventListener('click', openImageViewer);
+            }
+            */
+            // --- END MODIFICATION ---
+
+            // Click listener for the new "zoom" button (remains the same)
+            if (viewFullImageBtn) {
+                viewFullImageBtn.addEventListener('click', openImageViewer);
+            }
+
+            if (imageViewerCloseBtn) {
+                imageViewerCloseBtn.addEventListener('click', () => {
+                    if (imageViewerModal) imageViewerModal.style.display = 'none';
+                });
+            }
+
+            // --- MODIFICATION: Removed window.addEventListener for imageViewerModal ---
+            /*
+            if (imageViewerModal) {
+                imageViewerModal.addEventListener('click', (event) => {
+                    if (event.target == imageViewerModal) {
+                        imageViewerModal.style.display = 'none';
+                    }
+                });
+            }
+            */
+            // --- END MODIFICATION ---
+
 
             const categoryButtonsContainer = document.querySelector('.category-buttons');
             const swipeIndicator = document.querySelector('.swipe-indicator');
 
             if (categoryButtonsContainer && swipeIndicator) {
-                // Check if scroll is needed initially
                 if (categoryButtonsContainer.scrollWidth > categoryButtonsContainer.clientWidth) {
-                    swipeIndicator.style.display = 'flex'; // Show if needed
+                    swipeIndicator.style.display = 'flex';
                 } else {
-                    swipeIndicator.style.display = 'none'; // Hide if not needed
+                    swipeIndicator.style.display = 'none';
                 }
                 categoryButtonsContainer.addEventListener('scroll', () => {
                     swipeIndicator.classList.add('hide');
@@ -284,16 +384,18 @@
             const categoryButtons = document.querySelectorAll('.category-btn');
             const searchInput = document.getElementById('searchInput');
             const sortBySelect = document.getElementById('sort-select');
-            const menuGrid = document.querySelector('.menu-grid'); // Define menuGrid here
+            const menuGrid = document.querySelector('.menu-grid');
+            
+            const allMenuItems = Array.from(document.querySelectorAll('.menu-item-card'));
 
             const filterAndSort = () => {
                 const activeCategoryBtn = document.querySelector('.category-btn.active');
-                // Add checks for elements
                 if (!activeCategoryBtn || !searchInput || !sortBySelect || !menuGrid) return;
                 const activeCategory = activeCategoryBtn.dataset.category;
                 const searchTerm = searchInput.value.toLowerCase();
                 const sortValue = sortBySelect.value;
-                let itemsToShow = Array.from(document.querySelectorAll('.menu-item-card'));
+                
+                let itemsToShow = allMenuItems;
 
                 itemsToShow.forEach(item => {
                     const isVisibleByCategory = activeCategory === 'All' || item.dataset.category === activeCategory;
@@ -305,7 +407,7 @@
                 let visibleItems = itemsToShow.filter(item => item.style.display !== 'none');
 
                 visibleItems.sort((a, b) => {
-                    if (sortValue === 'popular') return 0; // Or implement actual popularity sort if needed
+                    if (sortValue === 'popular') return 0;
                     const priceA = parseFloat(a.dataset.price.replace(/[₱,]/g, ''));
                     const priceB = parseFloat(b.dataset.price.replace(/[₱,]/g, ''));
                     if (sortValue === 'price-low-high') return priceA - priceB;
@@ -313,7 +415,7 @@
                     return 0;
                 });
 
-                menuGrid.innerHTML = ''; // Clear grid before re-appending
+                menuGrid.innerHTML = '';
                 visibleItems.forEach(item => menuGrid.appendChild(item));
             };
 
@@ -346,7 +448,7 @@
                 observer.observe(item);
             });
 
-            filterAndSort(); // Initial filter and sort
+            filterAndSort(); 
 
         });
     </script>
