@@ -561,11 +561,14 @@ $section = $_GET['section'] ?? 'hero_section';
                                 <label for="menu_category">Category:</label>
                                 <select id="menu_category" name="menu_category" required>
                                     <option value='Specialty'>Specialty</option>
+                                    <option value='Appetizer'>Appetizer</option>
                                     <option value='Breakfast'>All Day Breakfast</option>
                                     <option value='Lunch'>Ala Carte/For Sharing</option>
                                     <option value='Sizzlers'>Sizzling Plates</option>
                                     <option value='Coffee'>Cafe Drinks</option>
+                                    <option value='Non-Coffee'>Non-Coffee</option>
                                     <option value='Cool Creations'>Frappe</option>
+                                    <option value='Cakes'>Cakes</option>
                                 </select>
                             </div>
                             <div class="form-group"><label for="menu_name">Name:</label><input type="text" id="menu_name" name="menu_name" required></div>
@@ -579,11 +582,14 @@ $section = $_GET['section'] ?? 'hero_section';
                         <nav class="menu-nav">
                             <a href="#" class="menu-nav-link" data-category="all">View All</a>
                             <a href="#" class="menu-nav-link" data-category="Specialty">Specialty</a>
+                            <a href="#" class="menu-nav-link" data-category="Appetizer">Appetizer</a>
                             <a href="#" class="menu-nav-link" data-category="Breakfast">All Day Breakfast</a>
                             <a href="#" class="menu-nav-link" data-category="Lunch">Ala Carte/For Sharing</a>
                             <a href="#" class="menu-nav-link" data-category="Sizzlers">Sizzling Plates</a>
                             <a href="#" class="menu-nav-link" data-category="Coffee">Cafe Drinks</a>
+                            <a href="#" class="menu-nav-link" data-category="Non-Coffee">Non-Coffee</a>
                             <a href="#" class="menu-nav-link" data-category="Cool Creations">Frappe</a>
+                            <a href="#" class="menu-nav-link" data-category="Cakes">Cakes</a>
                         </nav>
 
                         <div class="menu-container">
